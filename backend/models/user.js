@@ -25,8 +25,10 @@ const userSchema = new mongoose.Schema({
     default: "pending"
   },
   designation: { type: String },
-  institution: { type: String },
-  institution_id: { type: String },
+  institution: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "Institution" 
+  },
   profile_url: { type: String },
 }, { timestamps: true });
 
