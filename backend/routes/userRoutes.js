@@ -1,21 +1,13 @@
-const express = require('express');
-
+const express = require("express");
 const userRouter = express.Router();
+const { getProfile, approveUser, rejectUser, getAllUsers } = require("../controllers/userController");
+const { verifyToken } = require("../middleware/authMiddleware");
+const { isCoordinator } = require("../middleware/roleMiddleware");
 
-// // user logout
-// userRouter.post('/logout', (req, res) => {});
-// // get user profile
-// userRouter.get('/profile', (req, res) => {});
+userRouter.get("/me", verifyToken, getProfile); // all roles
 
-// // update user profile
-// userRouter.put('/profile', (req, res) => {});
-// // delete user account
-// userRouter.delete('/profile', (req, res) => {});
-// // get all users
-// userRouter.get('/', (req, res) => {});
+userRouter.get("/", verifyToken, isCoordinator, getAllUsers); // coordinator only
+userRouter.put("/:id/approve", verifyToken, isCoordinator, approveUser);
+userRouter.put("/:id/reject", verifyToken, isCoordinator, rejectUser);
 
-// // check if user exists
-// userRouter.get('/checkuser/:userId', (req, res) => {});
-
-// Export the userRouter
 module.exports = userRouter;
