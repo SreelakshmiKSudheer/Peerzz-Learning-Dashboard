@@ -1,69 +1,67 @@
-const User = require('../models/User'); // Import the User model
-const bcrypt = require('bcrypt');     // Import bcrypt for password hashing
-const jwt = require('jsonwebtoken');     // Import jsonwebtoken for token generation
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-const allowedRoles = ["learner", "educator"]; // Define allowed roles
-// Register a new user
+// @desc    Register new user
+// @route   POST /api/auth/register
+// @access  Public
 exports.register = async (req, res) => {
-    try{
-        const {name, email, password, role} = req.body;
+  try {
+    let { name, email, password, role } = req.body;
+    role = role || "learner";
 
-        // Check if the role is allowed
-        if (!allowedRoles.includes(role)) {
-            return res.status(400).json({ message: "Invalid role" });
-        }
-        // Check if user already exists
-        const existingUser = await User.findOne({ email})
-        if (existingUser) {
-            return res.status(400).json({ message: "User already exists. Try Login" });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
-        const newUser = new User({
-            name,
-            email,
-            password: hashedPassword, // Store the hashed password
-            role, // Store the user role
-            status: "pending" // Default status is pending
-        }); // Create a new user instance
-
-        await newUser.save(); // Save the new user to the database
-
-        res.status(201).json({ message: "User registered successfully. Waitning for approval" });
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Name, email, and password are required" });
     }
-    catch (error) {
-        return res.status(500).json({ message: "Server error", error: error.message });
-    }
-}
 
+    const existing = await User.findOne({ email });
+    if (existing) return res.status(400).json({ message: "Email already exists" });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+      status: "pending" // default until approved by coordinator
+    });
+
+    res.status(201).json({ message: "Registered successfully, pending approval" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// @desc    Login user
+// @route   POST /api/auth/login
+// @access  Public
 exports.login = async (req, res) => {
-    try{
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        // Check if user exists
-        const user = await User.findOne({ email });
-        if (!user){
-            return res.status(400).json({ message: "User not found. Please register" });
-        }
-        // Check if password is correct
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(400).json({ message: "Invalid password" });
-        }
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-        // Generate JWT token
-        const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    // if (user.status !== "approved") {
+    //   return res.status(403).json({ message: "Account not approved yet" });
+    // }
 
-        res.status(200).json({
-            message: "Login successful",
-            token,
-            user: {
-                id: user._id,
-                name: user.name,
-                role: user.role,
-            }
-        });
-    } catch (error) {
-        return res.status(500).json({ message: "Server error", error: error.message });
-    }
-}
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).json({ message: "Invalid password" });
+
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: { id: user._id, name: user.name, role: user.role }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
