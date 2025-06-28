@@ -3,5 +3,7 @@ const router = express.Router();
 
 const userRouter = require('./userRoutes');
 
-// user routes
+// http://localhost:3000/api/user
 router.use('/user', userRouter);
+
+module.exports = router;
