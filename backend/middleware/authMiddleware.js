@@ -18,7 +18,8 @@ exports.verifyToken = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = {
       id: decoded.userId, // note: must match key used during sign
-      role: decoded.role
+      role: decoded.role,
+      institutionId: decoded.institutionId // add institutionId if needed
     };
     next();
   } catch (err) {
