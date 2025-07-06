@@ -2,69 +2,44 @@ const mongoose = require("mongoose");
 
 const courseSchema = new mongoose.Schema(
   {
-    title: String,
-    description: String,
-    domain: String,
-    tags: [String],
-    type: { type: String, enum: ["self-paced", "live"], default: "self-paced" },
+    title: {type: String, required: true},
+    description: {type: String, required: true},
+    domain: {type: String, required: true},
+    tags: {type: [String], required: true},
+    type: { type: String, enum: ["self-paced", "live"], default: "self-paced", required: true },
     duration: String,
     status: { type: String, enum: ["draft", "active", "archived"], default: "draft" },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     institution: { type: mongoose.Schema.Types.ObjectId, ref: "Institution" },
     startDate: Date,
     endDate: Date,
-    fee: { type: Number, default: 0 },
+    fee: { type: Number, default: 0, required: true }, // 0 for free courses
+    currency: { type: String, default: "USD" },
     image: String,
-    language: { type: String, default: "English" },
-    prerequisites: [String],
+    language: { type: String, default: "English", required: true },
+    prerequisites: { type: [String], required: true },
     syllabus: [
       {
-        title: String,
-        description: String,
+        title: { type: String, required: true },
+        description: { type: String, required: true },
         resources: [
           {
             type: { type: String, enum: ["video", "document", "link"], default: "video" },
             url: String,
-            description: String,
+            description: { type: String, required: true },
           },
         ],
       },
     ],
-    assignments: [{
-      title: String,
-      description: String,
-      dueDate: Date,
-      resources: [
-        {
-          type: { type: String, enum: ["document", "link"], default: "document" },
-          url: String,
-          description: String,
-        },
-      ],
-    }],
-    quizzes: [
-      {
-        title: String,
-        description: String,
-        questions: [
-          {
-            questionText: String,
-            options: [String],
-            correctAnswer: String,
-            points: { type: Number, default: 1 },
-          },
-        ],
-        totalMarks: { type: Number, default: 0 },
-      },
-    ],
+    modules: [{ type: mongoose.Schema.Types.ObjectId, ref: "Module", required: true }], // Array of Module IDs
     certifications: {
-      type: { type: String, enum: ["certificate", "diploma"], default: "certificate" },
-      provider: String,
+      type: { type: String, enum: ["certificate", "diploma"], default: "certificate", required: true },
+      provider: { type: String, required: true },
       validity: { type: Number, default: 12 }, // in months
     },
     prerequisitesMet: { type: Boolean, default: false },
     completionCriteria: {
-      type: { type: String, enum: ["percentage", "points"], default: "percentage" },
+      type: { type: String, enum: ["percentage", "points"], default: "percentage", required: true },
       value: { type: Number, default: 70 }, // e.g., 70% or 100 points
     },
     announcements: [
@@ -86,22 +61,8 @@ const courseSchema = new mongoose.Schema(
         ],
       },
     ],
-    coursePath: {
-      type: { type: String, enum: ["linear", "non-linear"], default: "linear" },
-      steps: [
-        {
-          title: String,
-          description: String,
-          resources: [
-            {
-              type: { type: String, enum: ["video", "document", "link"], default: "video" },
-              url: String,
-              description: String,
-            },
-          ],
-        },
-      ],
-    },
+    assignments: [{type: mongoose.Schema.Types.ObjectId, ref: "Assignment"}], // Array of Assignment IDs
+    quizzes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Quiz" }], // Array of Quiz IDs
     rating: {
       average: { type: Number, default: 0 },
       count: { type: Number, default: 0 },
