@@ -12,6 +12,7 @@ const quizSchema = new mongoose.Schema({
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     title: { type: String, required: true },
     description: String,
+    maxMarks: { type: Number, required: true },
     questions: [questionSchema],
     createdAt: { type: Date, default: Date.now }
 });
