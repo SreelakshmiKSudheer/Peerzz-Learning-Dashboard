@@ -1,6 +1,9 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+dotenv.config();
+
 /**
  * Register user by role (learner or educator)
  * @route   POST /api/auth/register/:role
@@ -66,11 +69,29 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Admin login using credentials from .env
+    if (
+      email === process.env.ADMIN_EMAIL &&
+      password === process.env.ADMIN_PASSWORD
+    ) {
+      const token = jwt.sign(
+        { userId: "peerzz_admin", role: "coordinator" },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      );
+
+      return res.status(200).json({
+        message: "Admin login successful",
+        user: { id: "peerzz_admin", name: "Peerzz Admin", role: "coordinator" }
+      });
+    }
+
+    // Regular user login
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (user.status === "rejected") {
-      return res.status(403).json({ message: "Account rejected" });
+    if (user.status === "banned") {
+      return res.status(403).json({ message: "Account banned" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -82,15 +103,17 @@ exports.login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Login successful",
       token,
       user: { id: user._id, name: user.name, role: user.role }
     });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // @desc    Logout user
 // @route   POST /api/auth/logout
