@@ -1,12 +1,31 @@
 const mongoose = require("mongoose");
 
 const submissionSchema = new mongoose.Schema(
-  {
-    task: { type: mongoose.Schema.Types.ObjectId, ref: "Task" },
-    submittedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    content: String, // could be a file URL, text answer, etc.
-    submittedAt: Date
+{
+  subtype: {
+    type: String,
+    enum: ["Assignment", "Quiz"],
+    required: true,
   },
+  submittedAgainst: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    refPath: "subtype", // dynamic reference to either Assignment or Quiz model
+  },
+  submittedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  content: {
+    type: String, // URL, text, etc.
+    required: true,
+  },
+  submittedAt: {
+    type: Date,
+    default: Date.now,
+  },
+  marksAwarded: { type: Number, default: 0 },
   { timestamps: true }
 );
 
