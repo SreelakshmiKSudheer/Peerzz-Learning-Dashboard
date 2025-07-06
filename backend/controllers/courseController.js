@@ -51,6 +51,9 @@ exports.createCourse = async (req, res) => {
   }
 };
 
+// @desc update a course
+// @route POST /api/courses/update/:id
+// @access Protected (educator and coordinator only)
 exports.updateCourse = async (req, res) => {
   try {
     const courseId = req.params.id;
@@ -69,6 +72,9 @@ exports.updateCourse = async (req, res) => {
   }
 };
 
+// @desc delete a course
+// @route DELETE /api/courses/:id
+// @access Protected (educator and coordinator only)
 exports.deleteCourse = async (req, res) => {
   try{
     const courseId = req.params.id;
@@ -89,6 +95,9 @@ exports.deleteCourse = async (req, res) => {
   }
 };
 
+// @desc get all courses
+// @route GET /api/course
+// @access Public
 exports.getAllCourses = async (req, res) => {
   try {
     const courses = await Course.find();
@@ -98,6 +107,9 @@ exports.getAllCourses = async (req, res) => {
   }
 };
 
+// @desc get course by id
+// @route GET /api/course/:id
+// @access Public
 exports.getCourseById = async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
@@ -110,6 +122,9 @@ exports.getCourseById = async (req, res) => {
   }
 };
 
+// @desc get course by key
+// @route GET /api/course/:key/:value
+// @access Public
 exports.getAllCoursesByKey = async (req, res) => {
   try{
     const { key, value } = req.params;
