@@ -26,24 +26,6 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// @desc    Approve a user (by coordinator)
-// @route   PUT /api/users/:id/approve
-// @access  Private (Coordinator)
-exports.approveUser = async (req, res) => {
-  try {
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { status: "approved" },
-      { new: true }
-    ).select("-password");
-
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    res.status(200).json({ message: "User approved", user });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-};
 
 // @desc    Reject a user (by coordinator)
 // @route   PUT /api/users/:id/reject

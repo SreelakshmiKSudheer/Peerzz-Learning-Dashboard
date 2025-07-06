@@ -82,6 +82,7 @@ exports.login = async (req, res) => {
 
       return res.status(200).json({
         message: "Admin login successful",
+        token,
         user: { id: "peerzz_admin", name: "Peerzz Admin", role: "coordinator" }
       });
     }
