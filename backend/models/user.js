@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["registered", "approved", "rejected"],
+    enum: ["registered", "rejected"],
     default: "registered"
   },
   designation: { type: String },
