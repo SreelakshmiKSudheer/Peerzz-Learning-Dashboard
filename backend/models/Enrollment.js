@@ -8,7 +8,7 @@ const enrollmentSchema = new mongoose.Schema({
   dateEnrolled: { type: Date, default: Date.now },
     status: {
         type: String,
-        enum: ["enrolled", "completed", "dropped"],
+        enum: ["enrolled", "completed", "dropped", "rejected"],
         default: "enrolled",
     },
 });

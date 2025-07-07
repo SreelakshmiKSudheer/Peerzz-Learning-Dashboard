@@ -6,6 +6,8 @@ const authRouter = require('./authRoutes');
 const courseRouter = require('./courseRoutes');
 const assignmentRouter = require('./assignmentRoutes');
 const quizRouter = require('./quizRoutes');
+const enrollmentRouter = require('./enrollmentRoutes');
+
 
 // http://localhost:3000/api/user
 router.use('/user', userRouter);
@@ -21,5 +23,8 @@ router.use('/assignment', assignmentRouter)
 
 // http://localhost:3000/api/quiz
 router.use('/quiz', quizRouter)
+
+// http://localhost:3000/api/enrollment
+router.use('/enrollment', enrollmentRouter)
 
 module.exports = router;
