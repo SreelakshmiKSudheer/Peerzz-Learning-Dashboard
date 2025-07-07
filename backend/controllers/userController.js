@@ -28,7 +28,7 @@ exports.getAllUsers = async (req, res) => {
 
 
 // @desc    Reject a user (by coordinator)
-// @route   PUT /api/users/:id/reject
+// @route   PUT /api/user/:id/reject
 // @access  Private (Coordinator)
 exports.rejectUser = async (req, res) => {
   try {
@@ -45,3 +45,53 @@ exports.rejectUser = async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
+
+
+// @desc Get all users by role 
+// @route GET /api/user/role/:role
+// @access Private (Coordinator)
+exports.getUserByRole = async (req, res) => {
+  try{
+    const role = req.params.role;
+    const users = await User.find({ role }).select("-password");
+    res.status(200).json({ users });
+  }catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+}
+
+// @desc Get all users by status
+// @route GET /api/user/status/:status
+// @access Private (Coordinator)
+exports.getUserByStatus = async (req, res) => {
+  try{
+    const status = req.params.status;
+    const users = await User.find({ status}).select("-password");
+    res.status(200).json({ users });
+  }catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+}
+
+// @desc Get all users by course
+// @route GET /api/user/course/:courseId
+// @access Private (Coordinator)
+exports.getUsersByCourse = async (req, res) => {
+  try{
+    const courseId = req.params.courseId;
+    const users = await User.find({ courses: courseId }).select("-password");
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "No users found for this course" });
+    }
+    res.status(200).json({ users });
+  }catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+}
+
+// @desc delete a user
+// @route DELETE /api/user/:id
+// @access Private (Coordinator)
+exports.deleteUser = async (req, res) => {
+
+}
