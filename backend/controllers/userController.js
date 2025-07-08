@@ -88,3 +88,24 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 }
+
+// @desc Change password
+// @route PUT /api/user/:id/change-password
+// @access Private
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.params.id);
+
+    if (!user || !(await user.matchPassword(currentPassword))) {
+      return res.status(400).json({ message: "Invalid current password" });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};

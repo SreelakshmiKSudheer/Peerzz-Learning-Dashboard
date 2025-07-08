@@ -6,7 +6,8 @@ const { getProfile,
     getUserByRole,
     getUserByStatus,
     getUsersByCourse,
-    deleteUser
+    deleteUser,
+    changePassword
 } = require("../controllers/userController");
 const { verifyToken } = require("../middleware/authMiddleware");
 const { isCoordinator } = require("../middleware/roleMiddleware");
@@ -28,5 +29,8 @@ userRouter.get("/status/:status", verifyToken, isCoordinator, getUserByStatus);
 
 // http://localhost:3000/api/user/:id
 userRouter.delete("/:id", verifyToken, isCoordinator, deleteUser);
+
+// http://localhost:3000/api/user/:id/change-password
+userRouter.put("/:id/change-password", verifyToken, changePassword);
 
 module.exports = userRouter;
