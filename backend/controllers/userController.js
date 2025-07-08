@@ -73,25 +73,18 @@ exports.getUserByStatus = async (req, res) => {
   }
 }
 
-// @desc Get all users by course
-// @route GET /api/user/course/:courseId
-// @access Private (Coordinator)
-exports.getUsersByCourse = async (req, res) => {
-  try{
-    const courseId = req.params.courseId;
-    const users = await User.find({ courses: courseId }).select("-password");
-    if (!users || users.length === 0) {
-      return res.status(404).json({ message: "No users found for this course" });
-    }
-    res.status(200).json({ users });
-  }catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-}
 
 // @desc delete a user
 // @route DELETE /api/user/:id
 // @access Private (Coordinator)
 exports.deleteUser = async (req, res) => {
-
+  try{
+    const userId = req.params.id;
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) 
+      return res.status(404).json({ message: "User not found" });
+    res.status(200).json({ message: "User deleted successfully" });
+  }catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
 }

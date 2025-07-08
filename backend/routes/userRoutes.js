@@ -26,9 +26,6 @@ userRouter.get("/role/:role", verifyToken, isCoordinator, getUserByRole);
 // http://localhost:3000/api/user/status/:status
 userRouter.get("/status/:status", verifyToken, isCoordinator, getUserByStatus);
 
-// http://localhost:3000/api/user/course/:courseId
-userRouter.get("/course/:courseId", verifyToken, isCoordinator, getUsersByCourse);
-
 // http://localhost:3000/api/user/:id
 userRouter.delete("/:id", verifyToken, isCoordinator, deleteUser);
 
