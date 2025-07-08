@@ -30,7 +30,13 @@ enrollmentRouter.get("/course/:courseId", verifyToken, isCoordinator || isEducat
 // Update enrollment status (for coordinators or educators)
 // http://localhost:3000/api/enrollment/:id/status
 enrollmentRouter.put("/:id/status", verifyToken, isCoordinator || isEducator , updateEnrollmentStatus);
-enrollmentRouter.put("/:id", verifyToken, isCoordinator, rejectEnrollment);
+
+// Reject an enrollment request (for coordinators)
+// http://localhost:3000/api/enrollment/:id/reject
+enrollmentRouter.put("/:id/reject", verifyToken, isCoordinator, rejectEnrollment);
+
+// Delete an enrollment (for coordinators)
+// http://localhost:3000/api/enrollment/:id
 enrollmentRouter.delete("/:id", verifyToken, isCoordinator, deleteEnrollment);
 
 module.exports = enrollmentRouter;

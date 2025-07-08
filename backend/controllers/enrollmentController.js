@@ -138,15 +138,49 @@ exports.updateEnrollmentStatus = async (req, res) => {
 }
 
 // @desc reject an enrollment
-// @route PUT /api/enrollment/:id
+// @route PUT /api/enrollment/:id/reject
 // @access Private (Coordinator, Educator)
 exports.rejectEnrollment = async (req, res) => {
+    try{
+        const enrollmentId = req.params.id;
 
+        // Find the enrollment
+        const enrollment = await Enrollment.findById(enrollmentId);
+        if (!enrollment){
+            return res.status(404).json({ message: "Enrollment not found" });
+        }
+        // Check if the enrollment is already rejected
+        if (enrollment.status === "rejected"){
+            return res.status(400).json({ message: "Enrollment is already rejected" });
+        }
+        // Update the enrollment status to rejected
+        enrollment.status = "rejected";
+        await enrollment.save();
+        res.status(200).json({ message: "Enrollment rejected", enrollment });
+    }
+    catch (error) {
+        console.error("Error rejecting enrollment:", error);
+        res.status(500).json({ message: "Server error" });
+    }
 }
 
 // @desc Delete an enrollment
 // @route DELETE /api/enrollment/:id   
 // @access Private (Coordinator, Educator)
 exports.deleteEnrollment = async (req, res) => {
+    try {
+        const enrollmentId = req.params.id;
 
+        // Find the enrollment
+        const enrollment = await Enrollment.findById(enrollmentId);
+        if (!enrollment) {
+            return res.status(404).json({ message: "Enrollment not found" });
+        }   
+        // Delete the enrollment
+        await Enrollment.findByIdAndDelete(enrollmentId);
+        res.status(200).json({ message: "Enrollment deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting enrollment:", error);
+        res.status(500).json({ message: "Server error" });
+    }
 }
