@@ -2,10 +2,11 @@ const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema(
   {
-    toUser: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    message: String,
-    isRead: { type: Boolean, default: false },
-    type: { type: String, enum: ["task", "announcement", "feedback", "reminder"] }
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    title: { type: String, required: true },
+    message: { type: String, required: true },
+    type: { type: String, enum: ["info", "alert", "reminder"], default: "info" },
+    isRead: { type: Boolean, default: false }
   },
   { timestamps: true }
 );
