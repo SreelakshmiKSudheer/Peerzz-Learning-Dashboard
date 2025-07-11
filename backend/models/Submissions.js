@@ -26,6 +26,7 @@ const submissionSchema = new mongoose.Schema(
     default: Date.now,
   },
   marksAwarded: { type: Number, default: 0 },
+},
   { timestamps: true }
 );
 
