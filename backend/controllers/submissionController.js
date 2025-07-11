@@ -71,87 +71,100 @@ exports.submitQuiz = async (req, res) => {
 // Get all submissions by user
 // http://localhost:3000/api/submission/user/:id
 exports.getSubmissionsByUser = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const submissions = await Submission.find({ submittedBy: userId })
-      .populate("submittedAgainst")
-      .populate("submittedBy", "name email");
+try {
+const { id: userId } = req.params;
+if (!userId) {
+  return res.status(400).json({ message: "User ID is required" });
+}
 
-    res.status(200).json({ submissions });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
+const submissions = await Submission.find({ submittedBy: userId })
+  .populate("submittedAgainst")
+  .populate("submittedBy", "name email");
+
+res.status(200).json({ message: "Submissions retrieved", submissions });
+} catch (err) {
+res.status(500).json({ message: "Server error", error: err.message });
+}
 };
 
 // Get all submissions of the logged-in learner
-// http://localhost:3000/api/submission/user/me
+// @route GET /api/submission/user/me
+// @access Private (Learner)
 exports.getMySubmissions = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const submissions = await Submission.find({ submittedBy: userId })
-      .populate("submittedAgainst")
-      .populate("submittedBy", "name email");
+try {
+const userId = req.user?.id || req.user?._id; // Handle both cases if using different token formats
+const submissions = await Submission.find({ submittedBy: userId })
+  .populate("submittedAgainst") // Will populate either Assignment or Quiz depending on discriminator
+  .populate("submittedBy", "name email");
 
-    res.status(200).json({ message: "Your submissions retrieved", submissions });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
+res.status(200).json({
+  message: "Your submissions retrieved successfully",
+  submissions,
+});
+} catch (err) {
+console.error("Error retrieving user submissions:", err);
+res.status(500).json({ message: "Server error", error: err.message });
+}
 };
-
 // Get single submission by ID
-// http://localhost:3000/api/submission/:id
+// @route GET /api/submission/:id
+// @desc Get submission by ID
+// @access Private (Educator/Coordinator)
 exports.getSubmissionById = async (req, res) => {
-  try {
-    const { submissionId } = req.params;
-    const submission = await Submission.findById(submissionId)
-      .populate("submittedAgainst")
-      .populate("submittedBy", "name email");
+try {
+const { id } = req.params; // Correct key from the route
+const submission = await Submission.findById(id)
+  .populate("submittedAgainst")
+  .populate("submittedBy", "name email");
 
-    if (!submission) return res.status(404).json({ message: "Submission not found" });
+if (!submission) {
+  return res.status(404).json({ message: "Submission not found" });
+}
 
-    res.status(200).json({ submission });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
+res.status(200).json({ submission });
+} catch (err) {
+res.status(500).json({ message: "Server error", error: err.message });
+}
 };
 
 // Get all submissions by Assignment ID
-// http://localhost:3000/api/submission/assignment/:id
+// @route GET /api/submission/assignment/:id
+// @access Private (Coordinator, Educator)
 exports.getSubmissionsByAssignmentId = async (req, res) => {
-  try {
-    const { assignmentId } = req.params;
-    const submissions = await Submission.find({
-      subtype: "Assignment",
-      submittedAgainst: assignmentId
-    }).populate("submittedBy", "name email");
+try {
+const { id } = req.params; // Correct key from route
+const submissions = await Submission.find({
+subtype: "Assignment",
+submittedAgainst: id
+}).populate("submittedBy", "name email");
+if (!submissions || submissions.length === 0) {
+  return res.status(404).json({ message: "No submissions found for this assignment" });
+}
 
-    if (!submissions || submissions.length === 0) {
-      return res.status(404).json({ message: "No submissions found for this assignment" });
-    }
-
-    res.status(200).json({ submissions });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-};
+res.status(200).json({ message: "Assignment submissions retrieved", submissions });  
+} catch (err) {
+res.status(500).json({ message: "Server error", error: err.message });
+}
+}; 
 
 
 // Get all submissions for a quiz
 // http://localhost:3000/api/submission/quiz/:id
+// @route GET /api/submission/quiz/:id
+// @access Private (Coordinator, Educator)
 exports.getSubmissionsByQuizId = async (req, res) => {
-  try {
-    const { quizId } = req.params;
-    const submissions = await Submission.find({
-      subtype: "Quiz",
-      submittedAgainst: quizId,
-    }).populate("submittedBy", "name email");
+try {
+const { id } = req.params; // Extract correct parameter
+const submissions = await Submission.find({
+subtype: "Quiz",
+submittedAgainst: id,
+}).populate("submittedBy", "name email");
+if (!submissions || submissions.length === 0) {
+  return res.status(404).json({ message: "No submissions found for this quiz" });
+}
 
-    if (!submissions || submissions.length === 0) {
-      return res.status(404).json({ message: "No submissions found for this quiz" });
-    }
-
-    res.status(200).json({ message: "Quiz submissions retrieved", submissions });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
+res.status(200).json({ message: "Quiz submissions retrieved", submissions });
+} catch (err) {
+res.status(500).json({ message: "Server error", error: err.message });
+}
 };
