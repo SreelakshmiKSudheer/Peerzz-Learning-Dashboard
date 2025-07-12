@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+/* Light mode */
+:root {
+  --color-primary: #F1F1F1;       
+  --color-secondary: #FFFFFF;     
+  --color-tertiary: #000000;      
+  --color-quaternary: #0223CC;    
+}
+
+/* Dark mode overrides */
+.dark {
+  --color-primary: #111317;       
+  --color-secondary: #1E1F29;     
+  --color-tertiary: #FFFFFF;      
+  --color-quaternary: #0223CC;    
+}
