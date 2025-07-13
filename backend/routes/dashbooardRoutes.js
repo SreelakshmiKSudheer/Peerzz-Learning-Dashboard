@@ -5,7 +5,7 @@ const { verifyToken } = require("../middleware/authMiddleware");
 const { isLearner, isCoordinator, isEducator } = require("../middleware/roleMiddleware");
 
 // GET /api/dashboard/public
-dashboardRouter.get("/public", getPublicDashboard);
+dashboardRouter.get("/", getPublicDashboard);
 
 // GET /api/dashboard/learner
 dashboardRouter.get("/learner", verifyToken, isLearner, getLearnerDashboard);
