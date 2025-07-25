@@ -7,7 +7,7 @@ const Layout = () => {
     return (
         <div className='bg-[var(--uni)]'>
             <Header /> 
-            <main className="min-h-screen px-4 py-6 text-[var(--tri)]">
+            <main className="min-h-screen px-4 text-[var(--tri)]">
                 <Outlet />
             </main>
             <Footer />
