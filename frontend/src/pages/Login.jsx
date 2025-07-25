@@ -1,6 +1,7 @@
 import { React, useState } from 'react';
-import API from '../api'; // Make sure the path to api.js is correct
+import API from '../api';
 import { useNavigate } from 'react-router';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -8,6 +9,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth(); // Get login function from context
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,14 +19,11 @@ const Login = () => {
     try {
       const res = await API.post('/auth/login', { email, password });
 
-      // For Axios, successful responses are in res.data
-      // No need to check res.ok (that's for fetch API)
       if (res.data && res.data.token) {
         const { token, user } = res.data;
 
-        // Save token and user data
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
+        // Use context login function instead of directly setting localStorage
+        login(token, user);
 
         // Redirect based on user role
         switch (user.role) {
@@ -44,7 +43,6 @@ const Login = () => {
         setError('Login failed. Please check your credentials.');
       }
     } catch (err) {
-      // Handle API errors
       if (err.response && err.response.data) {
         setError(err.response.data.message || 'Login failed');
       } else {
@@ -69,7 +67,7 @@ const Login = () => {
               id="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="w-full px-5 py-2 bg-[var(--bi)] rounded focus:outline-none focus:ring-2 focus:ring-[var(--quad)]"
+              className="w-full px-5 py-2 bg-[var(--bi)] rounded focus:outline-none focus:ring-2 focus:ring-[var(--quad)] text-[var(--tri)]"
               placeholder='Email ID'
               required
             />
@@ -80,18 +78,24 @@ const Login = () => {
               id="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="w-full px-5 py-2 bg-[var(--bi)] rounded focus:outline-none focus:ring-2 focus:ring-[var(--quad)]"
+              className="w-full px-5 py-2 bg-[var(--bi)] rounded focus:outline-none focus:ring-2 focus:ring-[var(--quad)] text-[var(--tri)]"
               required
               placeholder='Password'
             />
           </div>
 
-          <div className='mb-4 text-center w-full'>Don't have an account? <a href="/register" className="text-[var(--quad)]">Sign Up</a></div>
+          {error && (
+            <div className="mb-4 text-center text-red-600 font-semibold">
+              {error}
+            </div>
+          )}
+          <div className='mb-4 text-center w-full text-[var(--tri)]'>Don't have an account? <a href="/register" className="text-[var(--quad)]">Sign Up</a></div>
           <button
             type="submit"
             className="w-full py-2 rounded-md bg-[var(--quad)] text-white font-bold hover:bg-[var(--quad-dark)] transition"
+            disabled={loading}
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
       </div>

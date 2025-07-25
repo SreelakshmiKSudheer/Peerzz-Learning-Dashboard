@@ -2,6 +2,7 @@ import React from 'react'
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import API from '../api';
+import { useAuth } from '../context/AuthContext';
 
 const SignUp = () => {
   const [name, setName] = useState('');
@@ -12,6 +13,7 @@ const SignUp = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth(); // Get login function from context
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,6 +50,9 @@ const SignUp = () => {
           localStorage.setItem('token', token);
           localStorage.setItem('user', JSON.stringify(user));
           
+          // Use context login function instead of localStorage
+          login(token, user);
+
           // Redirect to learner dashboard
           navigate('/learner-dashboard');
         } else {

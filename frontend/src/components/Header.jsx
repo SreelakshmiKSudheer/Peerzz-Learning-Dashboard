@@ -1,10 +1,21 @@
-import { useState } from "react";
+import { React,useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 import { User } from "lucide-react";
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router';
+
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <header className="flex justify-between items-center h-20 px-4 py-3">
       <h1 className="text-3xl font-extrabold text-[var(--quad)]">Peer<span className="text-[#FBC923]">zz</span></h1>
@@ -20,11 +31,11 @@ const Header = () => {
           </button>
           {showDropdown && (
             <div className="absolute right-0 mt-2 w-40 bg-[var(--bi)] rounded shadow-lg z-10 py-2">
-              {isLoggedIn ? (
+              {isAuthenticated ? (
                 <>
                   <a href="/profile" className="block px-4 py-2 text-sm text-[var(--tri)] hover:bg-[var(--uni)]">Profile</a>
                   <button
-                    onClick={() => { setIsLoggedIn(false); setShowDropdown(false); }}
+                    onClick={handleLogout}
                     className="block w-full text-left px-4 py-2 text-sm text-[var(--tri)] hover:bg-[var(--uni)]"
                   >
                     Logout
