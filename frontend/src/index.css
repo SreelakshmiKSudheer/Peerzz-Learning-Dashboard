@@ -1,17 +1,18 @@
+/* styles.css or tailwind base layer */
 @import "tailwindcss";
 
-/* Light mode */
 :root {
-  --color-primary: #F1F1F1;       
-  --color-secondary: #FFFFFF;     
-  --color-tertiary: #000000;      
-  --color-quaternary: #0223CC;    
+  --uni: #F1F1F1;
+  --bi: #FFFFFF;
+  --tri: #000000;
+  --quad: #0223CC;
+  --quad-dark: #021A99;
 }
 
-/* Dark mode overrides */
 .dark {
-  --color-primary: #111317;       
-  --color-secondary: #1E1F29;     
-  --color-tertiary: #FFFFFF;      
-  --color-quaternary: #0223CC;    
+  --uni: #111317;
+  --bi: #1E1F29;
+  --tri: #FFFFFF;
+  --quad: #0223CC;
+  --quad-dark: #021A99;
 }
