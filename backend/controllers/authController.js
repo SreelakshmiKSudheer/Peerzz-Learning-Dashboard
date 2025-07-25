@@ -55,7 +55,29 @@ exports.registerByRole = async (req, res) => {
       institution: cleanRole === "educator" ? institutionId : undefined
     });
 
-    res.status(201).json({ message: `Registered successfully as ${cleanRole}` });
+    // Create JWT token for the newly registered user
+    const token = jwt.sign(
+      { 
+        userId: user._id, 
+        role: user.role,
+        institutionId: cleanRole === "educator" ? institutionId : undefined 
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    // Return success response with token and user info
+    res.status(201).json({ 
+      message: `Registered successfully as ${cleanRole}`,
+      token,
+      user: { 
+        id: user._id, 
+        name: user.name, 
+        email: user.email, 
+        role: user.role,
+        institutionId: cleanRole === "educator" ? institutionId : undefined
+      }
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -124,7 +146,7 @@ exports.logout = (req, res) => {
   // by removing the token from local storage or cookies.
   // Here we can just send a response indicating successful logout.
   res.status(200).json({ message: "Logout successful" });
-}
+};
 
 // Sample JSON input for educator registration
 // POST /api/auth/register/:educator
