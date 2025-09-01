@@ -3,6 +3,7 @@ const userRouter = express.Router();
 const { getProfile, 
     rejectUser, 
     getAllUsers,
+    getUserById,
     getUserByRole,
     getUserByStatus,
     getUsersByCourse,
@@ -20,6 +21,9 @@ userRouter.get("/", verifyToken, isCoordinator, getAllUsers); // coordinator onl
 
 // http://localhost:3000/api/user/:id/reject
 userRouter.put("/:id/reject", verifyToken, isCoordinator, rejectUser);
+
+// http://localhost:3000/api/user/:id
+userRouter.get("/:id", verifyToken, isCoordinator, getUserById);
 
 // http://localhost:3000/api/user/role/:role
 userRouter.get("/role/:role", verifyToken, isCoordinator, getUserByRole);
