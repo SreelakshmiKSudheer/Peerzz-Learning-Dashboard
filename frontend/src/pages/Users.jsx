@@ -59,14 +59,12 @@ const Users = () => {
                             </button>
                             {openEducatorIndex === idx && (
                                 <div className="px-5 pb-4">
+                                    {/* <p>Email: {user._id}</p> */}
                                     <p>Email: {user.email}</p>
                                     <p>Joined: {new Date(user.createdAt).toLocaleDateString()}</p>
                                     <Link to={`/admin/users/user/${user._id}`}>
-                                        <button
-                                            className='bg-[var(--quad)] hover:bg-[var(--quad-dark)] px-3 py-1 font-semibold rounded-md mt-2 text-white'
-                                        >
-                                            View User
-                                        </button>
+                                        <button 
+                                        className='bg-[var(--quad)] hover:bg-[var(--quad-dark)] px-3 py-1 font-semibold rounded-md mt-2 text-white'>View User</button>
                                     </Link>
                                 </div>
                             )}
@@ -91,7 +89,7 @@ const Users = () => {
                                 <div className="px-5 pb-4">
                                     <p>Email: {user.email}</p>
                                     <p>Joined: {new Date(user.createdAt).toLocaleDateString()}</p>
-                                    <Link to={`/admin/users/user/${user._id}`}>
+                                    <Link to={`/admin/users/user/${user.id}`}>
                                         <button
                                             className='bg-[var(--quad)] hover:bg-[var(--quad-dark)] px-3 py-1 font-semibold rounded-md mt-2 text-white'
                                         >
