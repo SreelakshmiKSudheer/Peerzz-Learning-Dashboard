@@ -17,7 +17,7 @@ exports.getProfile = async (req, res) => {
 
     // Extract institution name if institution is populated
     const userObj = user.toObject();
-    userObj.institutionName = userObj.institution?.name || null;
+    (userObj).institutionName = userObj.institution?.name || null;
 
     res.status(200).json({ user: userObj });
   } catch (err) {
