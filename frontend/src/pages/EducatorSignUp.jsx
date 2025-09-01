@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router';
 import API from '../api';
+import Hero from '../components/Hero';
 
 const EducatorSignUp = () => {
   const [name, setName] = useState('');
