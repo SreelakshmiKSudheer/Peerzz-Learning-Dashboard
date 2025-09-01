@@ -1,5 +1,7 @@
 const express = require("express");
 const courseRouter = express.Router();
+// const upload = require("../middlewares/upload");
+// const { protect } = require("../middlewares/authMiddleware");
 
 const {
   createCourse,
